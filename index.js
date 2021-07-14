@@ -156,16 +156,92 @@ app.listen(port, () => {
     // console.log(s.val());
     //   });
 
-    //   setInterval(() => {
-    //     let date = getTimeBaseOffset(JKT_OFFSET);
-    //     let day = date.getDate();
-    //     let month = date.getMonth() + 1;
-    //     let year = date.getFullYear();
-    //     let hour = date.getHours()
-    //     let minute = date.getMinutes()
-    //     let seconds = date.getSeconds()
-    //     console.log(`${hour}:${minute}:${seconds}`);
-    //   }, 1000);
+    setInterval(() => {
+        let date = getTimeBaseOffset(JKT_OFFSET);
+        let currDay = date.getDate();
+        let currMonth = date.getMonth() + 1;
+        let currYear = date.getFullYear();
+        let hour = date.getHours()
+        let minute = date.getMinutes()
+        let seconds = date.getSeconds()
+        console.log(`${currDay}/${currMonth}/${currYear}  ${hour}:${minute}:${seconds}`);
+
+        database.ref(`Subjects/`).once('value', s => {
+
+            // console.log(s.val())
+            if (!s.exists()) return
+
+            let subjects = Object.entries(s.val()).map(r => { return r[1]})
+            // console.log(subjects)
+            subjects.forEach(subject => {
+
+                if(subject.Groups != undefined){
+
+                    let groups = Object.entries(subject.Groups).map(r => { return r[1]})
+
+                    groups.forEach(group => {
+                        if(group.Phases != undefined){
+                            group.Phases.forEach(phase => {
+
+                                let phaseDueDate = new Date(phase.DueDate);
+                                let phaseDay = phaseDueDate.getDate();
+                                let phaseMonth = phaseDueDate.getMonth();
+                                let phaseYear = phaseDueDate.getFullYear();
+
+                                if (currDay == phaseDay && currMonth == phaseMonth+1 && currYear == phaseYear) {
+                                    if (phase.Name == "Backlog") {
+                                        let notifId = database
+                                            .ref(`Notifications/${subject.ClassTransactionId}/${group.GroupNumber}/`)
+                                            .push().key;
+                                        database
+                                            .ref(`Notifications/${subject.ClassTransactionId}/${group.GroupNumber}/${notifId}/`)
+                                            .set({
+                                                text: `Today is ${subject.Subject}'s ${phase.Name} due date 🔥`,
+                                            })
+                                    } else {
+                                        let notifId = database
+                                            .ref(`Notifications/${subject.ClassTransactionId}/${group.GroupNumber}/`)
+                                            .push().key;
+                                        database
+                                            .ref(`Notifications/${subject.ClassTransactionId}/${group.GroupNumber}/${notifId}/`)
+                                            .set({
+                                                text: `Today is ${subject.Subject}'s ${phase.Name} due date 🔥\n go to discussion page for Sprint review and retrospective with your group!`,
+                                            })
+                                    }
+                                }
+                                if(phase.Categories != undefined){
+
+                                    phase.Categories.forEach(category => {
+
+                                        if(category.Tasks != undefined){
+                                            category.Tasks.forEach(task => {
+                                                let taskDueDate = new Date(task.DueDate);
+                                                let taskDay = taskDueDate.getDate();
+                                                let taskMonth = taskDueDate.getMonth();
+                                                let taskYear = taskDueDate.getFullYear();
+                                                if (currDay == taskDay && currMonth == taskMonth+1 && currYear == taskYear) {
+                                                    let notifId = database
+                                                    .ref(`Notifications/${subject.ClassTransactionId}/${group.GroupNumber}/`)
+                                                    .push().key;
+                                                    database
+                                                    .ref(`Notifications/${subject.ClassTransactionId}/${group.GroupNumber}/${notifId}/`)
+                                                    .set({
+                                                        text: `Today is ${task.Name}'s due date 🔥`,
+                                                    })
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+
+        })
+
+    }, 24 * 60 * 60 * 1000);
 
     //   if(activeGroup){
     //     console.log("course active")
