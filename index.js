@@ -90,7 +90,7 @@ app.post("/create-phase-notification", (req, res) => {
                     database
                         .ref(`Notifications/${data.ClassTransactionId}/${data.GroupNumber}/${notifId}/`)
                         .set({
-                            text: `Today is ${data.Subject}'s ${phase.Name} due date 🔥\n go to discussion page for Sprint review and retrospective with your group!`,
+                            text: `Today is ${data.Subject}'s ${phase.Name} due date 🔥 Go to discussion page for Sprint review and retrospective with your group 👬`,
                             isViewed: students,
                         }).then(() => {
                             res.sendStatus(200);
@@ -152,10 +152,6 @@ app.post("/create-task-notification", (req, res) => {
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 
-    //   database.ref("Subjects/").on("value", (s) => {
-    // console.log(s.val());
-    //   });
-
     setInterval(() => {
         let date = getTimeBaseOffset(JKT_OFFSET);
         let currDay = date.getDate();
@@ -205,7 +201,7 @@ app.listen(port, () => {
                                         database
                                             .ref(`Notifications/${subject.ClassTransactionId}/${group.GroupNumber}/${notifId}/`)
                                             .set({
-                                                text: `Today is ${subject.Subject}'s ${phase.Name} due date 🔥\n go to discussion page for Sprint review and retrospective with your group!`,
+                                                text: `Today is ${subject.Subject}'s ${phase.Name} due date 🔥 Go to discussion page for Sprint review and retrospective with your group 👬`,
                                             })
                                     }
                                 }
@@ -242,13 +238,5 @@ app.listen(port, () => {
         })
 
     }, 24 * 60 * 60 * 1000);
-
-    //   if(activeGroup){
-    //     console.log("course active")
-    //     database.ref(`Subjects/${activeGroup.subject.ClassTransactionId}/Groups/${activeGroup.group.Group.GroupNumber}/Phases/`).on("value", (s) => {
-    //         console.log("VALUE CHANGED")
-    //         console.log(s.val());
-    //     });
-    //   }
 
 });
