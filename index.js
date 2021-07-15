@@ -208,8 +208,7 @@ app.listen(port, () => {
                                 if(phase.Categories != undefined){
 
                                     phase.Categories.forEach(category => {
-
-                                        if(category.Tasks != undefined){
+                                        if(category.Tasks != undefined && category.Name != "Completed"){
                                             category.Tasks.forEach(task => {
                                                 let taskDueDate = new Date(task.DueDate);
                                                 let taskDay = taskDueDate.getDate();
