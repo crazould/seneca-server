@@ -109,6 +109,8 @@ app.post("/create-task-notification", (req, res) => {
     let currMonth = currentDate.getMonth();
     let currYear = currentDate.getFullYear();
 
+    // console.log(data)
+
     if (data.TaskIdx == -1) data.TaskIdx = 0
 
 
@@ -136,7 +138,7 @@ app.post("/create-task-notification", (req, res) => {
                 database
                     .ref(`Notifications/${data.ClassTransactionId}/${data.GroupNumber}/${notifId}/`)
                     .set({
-                        text: `Today is ${task.Name}'s due date 🔥`,
+                        text: `Today is ${task.Name}'s due date 🔥 Go check your ${data.Subject} project!`,
                         isViewed: students,
                     }).then(() => {
                         res.sendStatus(200);
@@ -160,7 +162,7 @@ app.listen(port, () => {
         let hour = date.getHours()
         let minute = date.getMinutes()
         let seconds = date.getSeconds()
-        console.log(`${currDay}/${currMonth}/${currYear}  ${hour}:${minute}:${seconds}`);
+        // console.log(`${currDay}/${currMonth}/${currYear}  ${hour}:${minute}:${seconds}`);
 
         database.ref(`Subjects/`).once('value', s => {
 
@@ -221,7 +223,7 @@ app.listen(port, () => {
                                                     database
                                                     .ref(`Notifications/${subject.ClassTransactionId}/${group.GroupNumber}/${notifId}/`)
                                                     .set({
-                                                        text: `Today is ${task.Name}'s due date 🔥`,
+                                                        text: `Today is ${task.Name}'s due date 🔥 Go check your ${data.Subject} project!`,
                                                     })
                                                 }
                                             })
