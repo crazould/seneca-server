@@ -17,14 +17,15 @@ firebase.initializeApp(firebaseConfig);
 
 const database = firebase.database();
 const app = express();
-const port = 3000;
+
+const port = process.env.PORT || 3000;
 app.use(express.json());
 
 let activeGroup = null;
 // let activeUser = null
 const JKT_OFFSET = "+7";
 
-var allowedOrigins = ["http://localhost:3000", "http://localhost:8080"];
+var allowedOrigins = [`http://localhost:${port}`, "http://localhost:8080"];
 app.use(
     cors({
         origin: function (origin, callback) {
