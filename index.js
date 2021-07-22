@@ -13,21 +13,38 @@ var firebaseConfig = {
     appId: "1:167806167502:web:580f2ff20b144a32eb639f",
     measurementId: "G-YP7GTHWS42",
 };
+
 firebase.initializeApp(firebaseConfig);
 
 const database = firebase.database();
 const app = express();
-
 const port = process.env.PORT || 3000;
-app.use(express.json());
-
-let activeGroup = null;
-// let activeUser = null
 const JKT_OFFSET = "+7";
 
-// var allowedOrigins = [`http://localhost:${port}`, "http://localhost:8080"];
+app.use(express.json());
+var allowedOrigins = [`http://localhost:${port}`, "http://localhost:8080"];
+
+var corsOptions = {
+    origin: "http://localhost:8080",
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+var corsOptions2 = {
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            var msg =
+                "The CORS policy for this site does not " +
+                "allow access from the specified Origin.";
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
 app.use(
-    cors()
+    cors(corsOptions2)
 );
 
 function getTimeBaseOffset(locOffset) {
@@ -90,6 +107,10 @@ app.post("/create-phase-notification", (req, res) => {
         });
 
 });
+
+app.get("/", (req, res) =>{
+    res.send("There's nothing here. . .")
+})
 
 app.post("/create-task-notification", (req, res) => {
     let data = req.body;
